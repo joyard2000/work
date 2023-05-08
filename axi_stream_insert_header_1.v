@@ -36,8 +36,6 @@ reg [DATA_BYTE_WD-1 : 0] keep_in_r;
 wire axis_ready_in;
 
 
-//////////////////实现data_out传输//////////////////////////
-
 always@(posedge clk or negedge rst_n)
 if(!rst_n)
 begin
@@ -72,7 +70,6 @@ begin
 end
 
 
-//////////////实现header数据处理/////////////////////////////
 reg [DATA_WD-1 : 0]header_out_r;
 reg insert_flag;
 reg [DATA_BYTE_WD-1 : 0] keep_insert_out_r;
@@ -98,7 +95,7 @@ begin
 	insert_flag<=0;
 end
 
-////////////header插入到data////////////////
+
 
 reg [DATA_WD-1 : 0]header_data_out_r;
 always@(posedge clk or negedge rst_n)
@@ -116,7 +113,7 @@ begin
     default:begin header_data_out_r<=header_data_out_r;end
     endcase
 end
-//else if(last_in_pulse_p)
+
 else 
     begin
         case(keep_insert_out_r)
@@ -128,12 +125,7 @@ else
     endcase
     end
 
-/*
-else
-begin
-    header_data_out_r<=header_data_out_r;
-end
-*/
+
 reg s_ready_insert;
 assign data_out = ready_out?header_data_out_r:data_out_r2;
 always@(posedge clk or negedge rst_n)
@@ -145,7 +137,7 @@ begin
 end
 assign ready_insert=s_ready_insert;
 
-//////////判断valid_out
+
 reg [1:0]insert_flag_r;
 always@(posedge clk or negedge rst_n)
 begin
@@ -157,7 +149,7 @@ end
 assign neg_flag = ~insert_flag_r[1]&insert_flag_r[0];
 assign valid_out = neg_flag? 0 : 1;
 
-//////////判断keep_out输出
+
 wire last_out_p;
 reg [DATA_BYTE_WD-1 : 0] keep_out_r;
 always@(posedge clk or negedge rst_n)
@@ -180,7 +172,7 @@ begin
 end
 assign keep_out = keep_out_r;
 
-/////////判断last_out
+
 reg [1:0]last_out_r;
 
 always@(posedge clk or negedge rst_n)
